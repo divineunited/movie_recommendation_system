@@ -3,7 +3,8 @@ import numpy as np
 import os
 
 # importing different recommendation systems that we created:
-import collab_UserToUser
+#import collab_UserToUser
+import content_consine
 
 
 
@@ -52,6 +53,10 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then averaging them out across all recommendation systems, while ignoring NAN 
 # then sorting them to return to user the top N. 
 
-R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
+#R1 = collab_UserToUser.get_ratings(53, userItemRatingMatrix)
 
-print(R1)
+#print(R1)##
+
+
+
+print(content_consine.cosine_user(0))
