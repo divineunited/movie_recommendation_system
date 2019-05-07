@@ -3,8 +3,8 @@ import numpy as np
 import os
 
 # importing different recommendation systems that we created:
-#import collab_UserToUser
-import content_consine
+import collab_UserToUser
+import collab_LatentFactor
 
 
 
@@ -53,10 +53,15 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then averaging them out across all recommendation systems, while ignoring NAN 
 # then sorting them to return to user the top N. 
 
-#R1 = collab_UserToUser.get_ratings(53, userItemRatingMatrix)
+R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
+R2 = collab_LatentFactor.get_ratings(523)
+print(R1)
+print(R2)
 
-#print(R1)##
 
+# drop the movies already seen by active user
+    # moviesAlreadyWatched = userItemRatingMatrix.loc[user_id].dropna().index
+    # avgRating = avgRating[~avgRating.index.isin(moviesAlreadyWatched)]
 
-
-
+    # index is movie_id, [:N] is for the top movie_ids sorted by avgRating.
+    # topMovies = avgRating.sort_values(ascending=False).index[:N]
