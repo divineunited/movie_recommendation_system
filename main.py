@@ -53,23 +53,10 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then averaging them out across all recommendation systems, while ignoring NAN 
 # then sorting them to return to user the top N. 
 
-<<<<<<< HEAD
 #R1 = collab_UserToUser.get_ratings(53, userItemRatingMatrix)
 
 #print(R1)##
 
 
 
-print(content_consine.cosine_user(0))
-=======
-R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
-print(R1)
 
-
-# drop the movies already seen by active user
-    # moviesAlreadyWatched = userItemRatingMatrix.loc[user_id].dropna().index
-    # avgRating = avgRating[~avgRating.index.isin(moviesAlreadyWatched)]
-
-    # index is movie_id, [:N] is for the top movie_ids sorted by avgRating.
-    # topMovies = avgRating.sort_values(ascending=False).index[:N]
->>>>>>> d280efcfb917e24dd3ac7551ecaea780a96a07d8
