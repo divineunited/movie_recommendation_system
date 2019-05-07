@@ -44,13 +44,6 @@ def get_ratings(user_id, userItemRatingMatrix):
         # np.nanmean - Computes the arithmetic mean along the specified axis, ignoring NaNs.
         # then, we're dropping movies that don't have ratings / dropping na's
     avgRating = NNRatings.apply(np.nanmean).dropna()
-    
-    # drop the movies already seen by active user
-    moviesAlreadyWatched = userItemRatingMatrix.loc[user_id].dropna().index
-    avgRating = avgRating[~avgRating.index.isin(moviesAlreadyWatched)]
-
-    # index is movie_id, [:N] is for the top movie_ids sorted by avgRating.
-    # topMovies = avgRating.sort_values(ascending=False).index[:N]
 
     # we are returning the average rating of all movies that he did not see using Collaborative Filtering using USER TO USER SIMILARITY. This is not sorted yet.
     return avgRating
