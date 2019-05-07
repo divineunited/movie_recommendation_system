@@ -42,8 +42,7 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 
 
 
-This is Dan Dan testing out a main.py error creating.
-Remove me!
+
 
 
 
@@ -54,6 +53,7 @@ Remove me!
 # then sorting them to return to user the top N. 
 
 R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
+print(R1)
 
 
 # drop the movies already seen by active user
