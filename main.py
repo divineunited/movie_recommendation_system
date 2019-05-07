@@ -4,6 +4,7 @@ import os
 
 # importing different recommendation systems that we created:
 import collab_UserToUser
+import collab_LatentFactor
 
 
 
@@ -53,7 +54,9 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then sorting them to return to user the top N. 
 
 R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
+R2 = collab_LatentFactor.get_ratings(523)
 print(R1)
+print(R2)
 
 
 # drop the movies already seen by active user
