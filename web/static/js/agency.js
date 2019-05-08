@@ -29,7 +29,7 @@
   // Collapse Navbar
   var navbarCollapse = function() {
     if ($("#mainNav").offset().top > 100) {
-      $("#mainNav").addClass("navbar-shrink");
+      $("#mainNav").addClass("navbar-shrink"); // for result.html - always removeClass navbar-shrink. Result.html links to this js file, whereas index links to the min.js file
     } else {
       $("#mainNav").removeClass("navbar-shrink");
     }
