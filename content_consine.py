@@ -1,7 +1,144 @@
 import pandas as pd
 import numpy as np
 import os
+from scipy.stats import pearsonr
+import math
+from math import sqrt
 
+
+def cosine_user(n): #n is the person's ID
+
+    allUsers = userItemRatingMatrix.values
+    usern = allUsers[n] 
+    denominator1 = np.sqrt(sum([np.square(x) for x in usern]))
+
+    cosinesimilarity = []
+
+    i = 0
+
+    for user in allUsers[1:]:
+        numerator = [x*y for x,y in zip(usern,user)]
+        denominator2 = np.sqrt(sum([np.square(x) for x in user]))
+        costheta = sum(numerator) / (denominator1 * denominator2)
+        cosinesimilarity.append((userItemRatingMatrix.index[i], costheta))
+        i += 1
+    
+ 
+    usersdf = pd.DataFrame()
+
+    for user in cosinesimilarity:
+        usersdf = usersdf.append(userItemRatingMatrix.loc[user[0]])
+
+    usersdf['costheta'] = [user[1] for user in cosinesimilarity]
+
+    all_values = usersdf.values
+
+    denominator = sum([x[1] for x in cosinesimilarity])
+
+    inx = 0
+    
+    for x in usersdf.loc[n]:
+        totalsum = 0
+        if x == 0.0:
+            for v in range(1,942):
+             totalsum += all_values[v-1][inx] * all_values[v-1][941]
+        usersdf.loc[n][inx+1] = totalsum / denominator
+        inx += 1
+  
+    return usersdf.loc[n]
+
+
+def pearsons_user(n):
+    allUsersdf = pd.DataFrame(userItemRatingMatrix.index)
+    user = n
+
+    allUsers = userItemRatingMatrix.values
+
+    user1 = allUsers[0]
+    Pearson_corr = allUsersdf["user_id"].apply(lambda x: pearsonr(userItemRatingMatrix.loc[n],userItemRatingMatrix.loc[x]))
+    b = [list(x) for x in Pearson_corr]
+    pearsonsimilarity = []
+
+    i = 0
+
+    for user in allUsers[0:]:
+        pearsonsimilarity.append((userItemRatingMatrix.index[i], b[i][0]))
+        i += 1
+    
+    usersdf = pd.DataFrame()
+    usersdf
+
+    for user in pearsonsimilarity:
+        usersdf = usersdf.append(userItemRatingMatrix.loc[user[0]])
+
+    usersdf['pearson'] = [user[1] for user in pearsonsimilarity]
+
+    all_values = usersdf.values
+
+    denominator = sum([x[1] for x in pearsonsimilarity])
+
+    inx = 0
+    
+    for x in usersdf.loc[n]:
+        totalsum = 0
+        if x == 0.0:
+            for v in range(1,942):
+             totalsum += all_values[v-1][inx] * all_values[v-1][941]
+        usersdf.loc[n][inx+1] = totalsum / denominator
+        inx += 1
+    
+
+    return usersdf.loc[n]
+
+def eucli_user(n):
+    allUsersdf = pd.DataFrame(userItemRatingMatrix.index)
+    user = n
+
+    allUsers = userItemRatingMatrix.values
+
+    user1 = allUsers[0]
+    
+    euclisimilarity = []
+
+    i = 0
+    pn = [score for key, score in result.loc[n].items()]
+
+    for user in result.index:
+ 
+        pm = [score for key, score in result.loc[user].items()]
+        sum_of_square = sum(pow(pn[index]-pm[index],2) for index in range(len(pn)) if pm[index] != 0 and pn[index] != 0)
+        euclicorr = 1/(1+sum_of_square)
+        euclisimilarity.append((userItemRatingMatrix.index[i], euclicorr))
+        i += 1
+
+    usersdf = pd.DataFrame()
+    usersdf
+
+    for user in euclisimilarity:
+        usersdf = usersdf.append(userItemRatingMatrix.loc[user[0]])
+    usersdf['eucli'] = [user[1] for user in euclisimilarity]
+
+    all_values = usersdf.values
+
+    denominator = sum([x[1] for x in euclisimilarity])
+
+    inx = 0
+    
+    for x in usersdf.loc[n]:
+        totalsum = 0
+        if x == 0.0:
+            for v in range(1,942):
+             totalsum += all_values[v-1][inx] * all_values[v-1][941]
+        usersdf.loc[n][inx+1] = totalsum / denominator
+        inx += 1
+    
+    return usersdf.loc[n]
+
+
+
+
+
+#### TESTING FUNCTION BELOW:
 
 dataFile='./data/ml-100k/u.data'
 data = pd.read_csv(dataFile, sep="\t", header=0, names=["user_id","movie_id","rating", "timestamp"])
@@ -21,35 +158,11 @@ data = data[condition]
 userItemRatingMatrix=pd.pivot_table(data, values='rating',
                                     index=['user_id'], columns=['movie_id']).fillna(0)
 
+userItemRatingMatrix1=pd.pivot_table(data, values='rating',
+                                    index=['user_id'], columns=['movie_id'])
 ## Return the top 10 users who are most similar to user1 by consine theory
 
-def cosine_user(n,m): #n is the person's ID, m is the top m similar users returned
 
-    allUsers = userItemRatingMatrix.values
-    user1 = allUsers[n] 
-    denominator1 = np.sqrt(sum([np.square(x) for x in user1]))
-
-    cosinesimilarity = [(n,1)]
-
-    i = 1
-
-    for user in allUsers[1:]:
-        numerator = [x*y for x,y in zip(user1,user)]
-        denominator2 = np.sqrt(sum([np.square(x) for x in user]))
-        costheta = sum(numerator) / (denominator1 * denominator2)
-        cosinesimilarity.append((userItemRatingMatrix.index[i], costheta))
-        i += 1
-    
-    cosinesimilarity.sort(key = lambda x:x[1], reverse = True)
-    #similar_m_users = cosinesimilarity[0:m] 
-    return cosinesimilarity[0:m] 
-
-    
-
-## Return the top 10 users who are most similar to user1 by consine theory
-y = cosine_user(0,10)
-print(y)
-
-
+print(eucli_user(10))
 
 
