@@ -6,22 +6,6 @@ import math
 from math import sqrt
 
 
-def similarmovies(n,method):
-
-    if method == 'cosine':
-        y = cosine_user(n)
-    
-    elif method == 'pearsons':
-        y = pearsons_user(n)
-    
-    else:
-        y = eucli_user(n)
-
-    return y
-
-
-
-
 def cosine_movie(n): #n is the person's ID
 
     allUsers = userItemRatingMatrix.values

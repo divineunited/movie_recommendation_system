@@ -87,7 +87,18 @@
             <i class="fas fa-circle fa-stack-2x text-primary"></i>
             <i class="fas fa-film fa-stack-1x fa-inverse"></i>
           </span>
-          <h4 class="service-heading">You Chose: {{ prediction }}</h4>
+          <h4 class="service-heading">Our Recommendations for You:</h4>
+
+
+
+          <div class="list-group">
+              {% for prediction in predictions %}
+              <a href="https://www.imdb.com/find?{{prediction}}" class="list-group-item list-group-item-action">{{prediction}}</a>
+              {% endfor %}
+          </div>
+          
+
+
           <a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="{{ url_for('index', _anchor='services') }}">Try Again</a>
         </div>
       </div>
