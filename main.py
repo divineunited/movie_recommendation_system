@@ -4,6 +4,7 @@ import os
 
 # importing different recommendation systems that we created:
 import collab_UserToUser
+import collab_LatentFactor
 
 
 ##### Importing data that will be used to create recommendations:
@@ -51,4 +52,14 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then sorting them to return to user the top N. 
 
 R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
+R2 = collab_LatentFactor.get_ratings(523)
 print(R1)
+print(R2)
+
+
+# drop the movies already seen by active user
+    # moviesAlreadyWatched = userItemRatingMatrix.loc[user_id].dropna().index
+    # avgRating = avgRating[~avgRating.index.isin(moviesAlreadyWatched)]
+
+    # index is movie_id, [:N] is for the top movie_ids sorted by avgRating.
+    # topMovies = avgRating.sort_values(ascending=False).index[:N]
