@@ -7,7 +7,6 @@ import os
 import collab_LatentFactor
 
 
-
 ##### Importing data that will be used to create recommendations:
 
 dataFile='./data/ml-100k/u.data'
@@ -31,7 +30,6 @@ condition = data['movie_id'].isin(UsersPerMovie[UsersPerMovie > 10].index)
 data = data[condition]
 
 # Now, we have our user-item rating matrix. We have 943 users and 1,118 movies. We started off with 1,682 movies, but we whittled down the movie list to 1,118 by removing movies that had less than 10 reviews.
-
 
 
 
