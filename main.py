@@ -6,7 +6,6 @@ import os
 import collab_UserToUser
 
 
-
 ##### Importing data that will be used to create recommendations:
 
 dataFile='./data/ml-100k/u.data'
@@ -34,7 +33,6 @@ data = data[condition]
 
 
 
-
 ##### Creating User-Item Rating Matrix with Pivot Table:
 
 userItemRatingMatrix=pd.pivot_table(data, values='rating',
@@ -53,5 +51,4 @@ userItemRatingMatrix=pd.pivot_table(data, values='rating',
 # then sorting them to return to user the top N. 
 
 R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
-
 print(R1)
