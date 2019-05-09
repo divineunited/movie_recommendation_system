@@ -13,7 +13,8 @@ def index():
     return render_template("index.html")
 
 
-# when the form press submit, it links it to the redirect which will be sent here and then passes the variable to the result page:
+
+# when the form press submit, it links it to the redirect which will be sent here and then passes the prediction variable to the results page after back-end recommendation logic completed:
 @app.route('/myredirect', methods = ['POST'])
 def my_redirect():
     if request.method == 'POST':
@@ -26,14 +27,14 @@ def my_redirect():
         _features['movie_3'] = int(_features['movie_3'])
         _features['movie_4'] = int(_features['movie_4'])
 
-        print(_features) # flag
-        print(_features.values()) # flag
+        print(_features) # debug
+        print(_features.values()) # debug
 
         # get the values and turn it into a list
         _features=list(_features.values())
         return redirect(url_for('result', prediction = _features, _anchor='services'))
 
-# Wanted to redirect so that it can pass the anchor of where I want to land in the results page.
+# Wanted to redirect so that it can pass the anchor of where I want to land in the results page (services subsection of page).
 # Thank you to this code to help pass the redirect variable to this result route: 
 # https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route('/result/<prediction>')
