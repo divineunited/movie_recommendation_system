@@ -1,6 +1,5 @@
-web/classicmovies-5e206ef6ea35.json
-movie_recommendation_eda.ipynb
-.ipynb_checkpoints/
+classicmovies-5e206ef6ea35.json
+test/
 .vs/
 .vscode/
 __pycache__/

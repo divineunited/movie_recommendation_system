@@ -1,6 +1,6 @@
 # Movie Recommendation System
 
-In this project, I will build a full stack movie recommendation web application system based on a MovieLens archival dataset.
+In this project, we will build a full stack movie recommendation web application system based on a MovieLens archival dataset.
 
 
 **About The Data Set:**

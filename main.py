@@ -1,62 +1,89 @@
+from flask import Flask, render_template, request
+from flask import redirect, url_for, jsonify
+from google.cloud import bigquery
+
+# Common Imports:
 import pandas as pd
 import numpy as np
 import os
+import json
 
-# importing different recommendation systems that we created:
-import collab_UserToUser
-import collab_LatentFactor
+# custom imports:
+import query_data
+import recommend_engine
 
-
-##### Importing data that will be used to create recommendations:
-
-dataFile='./data/ml-100k/u.data'
-data = pd.read_csv(dataFile, sep="\t", header=0, names=["user_id","movie_id","rating", "timestamp"])
-
-movieFile='./data/ml-100k/u.item'
-movies = pd.read_csv(movieFile, sep="|", encoding='Latin-1', header=0, names=['movie_id', 'movie_title', 'release_date', 'video_release_date', 'IMDb_URL', 'Unknown', 'Action', 'Adventure', 'Animation', 'Childrens', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western'])
-
-
-##### Data Cleaning:
-
-# only retain values from movie-rating that actually have movie meta data
-data = data[data["movie_id"].isin(movies.movie_id)]
-
-# only keep movies which have been rated by more than 10 users
-UsersPerMovie = data.movie_id.value_counts()
-condition = data['movie_id'].isin(UsersPerMovie[UsersPerMovie > 10].index)
-data = data[condition]
-
-# Now, we have our user-item rating matrix. We have 943 users and 1,118 movies. We started off with 1,682 movies, but we whittled down the movie list to 1,118 by removing movies that had less than 10 reviews.
+app=Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 
-
-##### Creating User-Item Rating Matrix with Pivot Table:
-
-userItemRatingMatrix=pd.pivot_table(data, values='rating',
-                                    index=['user_id'], columns=['movie_id'])
-
-
-
-
-
-
-
-
-#### Collecting rating matrix of all movies based on a User using different systems
-# then removing ALL the movies the user has ALREADY seen 
-# then averaging them out across all recommendation systems, while ignoring NAN 
-# then sorting them to return to user the top N. 
-
-R1 = collab_UserToUser.get_ratings(523, userItemRatingMatrix)
-R2 = collab_LatentFactor.get_ratings(523)
-print(R1)
-print(R2)
+#### QUERY OUR TRANSACTION AND MOVIE DATA FROM GOOGLE BIG QUERY:
+# AUTHENTIFICATION:
+path = os.getcwd()
+path += '\classicmovies-5e206ef6ea35.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
+client = bigquery.Client()
+# GET DATA 
+        # this will query our data from the database once only when the app is loaded.
+movie_dicts, movie_dict = query_data.get_movie(client) # movie_dicts is an array of dictionaries for a JSON table (next level filtering of movies). movie_dict is just a dictionary of movie_ids as keys and movie_titles as corresponding values.
+# SOURCE for Dropdown Creation:
+# https://stackoverflow.com/questions/45877080/how-to-create-dropdown-menu-from-python-list-using-flask-and-html
+# NEXT LEVEL:
+# https://stackoverflow.com/questions/44646925/flask-dynamic-dependent-dropdown-list
+# ACCESSING DICTIONARY IN JINJA:
+# https://stackoverflow.com/questions/24727977/get-nested-dict-items-using-jinja2-in-flask
+data = query_data.get_data(client) # dataframe of transaction data for our recommendation systems
 
 
-# drop the movies already seen by active user
-    # moviesAlreadyWatched = userItemRatingMatrix.loc[user_id].dropna().index
-    # avgRating = avgRating[~avgRating.index.isin(moviesAlreadyWatched)]
+@app.route('/index')
+@app.route('/')
+def index():
+    global movie_dict
+    return render_template("index.html", movie_dict = movie_dict)
 
-    # index is movie_id, [:N] is for the top movie_ids sorted by avgRating.
-    # topMovies = avgRating.sort_values(ascending=False).index[:N]
+
+# when the form press submit, it links it to the redirect which will be sent here and then passes the prediction variable to the results page after back-end recommendation logic completed:
+@app.route('/myredirect', methods = ['POST'])
+def my_redirect():
+    global data
+    global movie_dict
+    if request.method == 'POST':
+        # from the request form, convert it to a dictionary saved as this variable
+        _features = request.form.to_dict()
+
+        ### converting inputs to their correct value types:
+        _features['movie_1'] = int(_features['movie_1'])
+        _features['movie_2'] = int(_features['movie_2'])
+        _features['movie_3'] = int(_features['movie_3'])
+        _features['movie_4'] = int(_features['movie_4'])
+
+        # get the values and turn it into a list
+        _features=list(_features.values())
+
+        # get our recommendation movie_ids:
+        movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
+
+        # convert them to movie titles:
+        predictions = [movie_dict[id] for id in movie_ids]
+
+        # send it as a proper JSON dumps string for the redirect routing so that it can be unpacked using a JSON loads:
+        predictions = json.dumps(predictions)
+
+        # passing our predictions JSON dump and an achor to the result url.
+        return redirect(url_for('result', predictions = predictions, _anchor='services'))
+
+
+
+# Wanted to redirect so that it can pass the anchor of where I want to land in the results page (services subsection of page).
+# Thank you to this code to help pass the redirect variable to this result route: 
+# https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
+@app.route('/result/<predictions>')
+def result(predictions):
+
+    # taking our passed json dump and loading it back out as a list to pass to our results template
+    predictions = json.loads(predictions)
+
+    return render_template("result.html", predictions = predictions)
+
+if __name__ == "__main__":
+    app.run(debug=True)
