@@ -43,4 +43,8 @@ def your_item_to_item_recommendations(movie_ids, data):
     # removing duplicates:
     recommendations = list(dict.fromkeys(recommendations))
 
-    return recommendations
+    # passing only the top 10:
+    if len(recommendations) < 10:
+        return recommendations
+    else:
+        return recommendations[:10]
