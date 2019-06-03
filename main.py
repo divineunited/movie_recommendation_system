@@ -18,21 +18,25 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 #### QUERY OUR TRANSACTION AND MOVIE DATA FROM GOOGLE BIG QUERY:
+
 # AUTHENTIFICATION:
 path = os.getcwd()
 path += '\classicmovies-5e206ef6ea35.json'
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
 client = bigquery.Client()
-# GET DATA 
-        # this will query our data from the database once only when the app is loaded.
-movie_dicts, movie_dict = query_data.get_movie(client) # movie_dicts is an array of dictionaries for a JSON table (next level filtering of movies). movie_dict is just a dictionary of movie_ids as keys and movie_titles as corresponding values.
+
+# GET DATA ----- this will query our data from the database once only when the app is loaded.
+movie_dicts, movie_dict = query_data.get_movie(client) 
+# movie_dicts is an array of dictionaries for a JSON table (next level filtering of movies). movie_dict is just a dictionary of movie_ids as keys and movie_titles as corresponding values.
 # SOURCE for Dropdown Creation:
 # https://stackoverflow.com/questions/45877080/how-to-create-dropdown-menu-from-python-list-using-flask-and-html
 # NEXT LEVEL:
 # https://stackoverflow.com/questions/44646925/flask-dynamic-dependent-dropdown-list
 # ACCESSING DICTIONARY IN JINJA:
 # https://stackoverflow.com/questions/24727977/get-nested-dict-items-using-jinja2-in-flask
-data = query_data.get_data(client) # dataframe of transaction data for our recommendation systems
+
+# getting dataframe of transaction data for our recommendation systems
+data = query_data.get_data(client) 
 
 
 @app.route('/index')
