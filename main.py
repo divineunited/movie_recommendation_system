@@ -18,7 +18,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 #### QUERY OUR TRANSACTION AND MOVIE DATA FROM GOOGLE BIG QUERY:
-
 # AUTHENTIFICATION:
 path = os.getcwd()
 path += '\classicmovies-5e206ef6ea35.json'
@@ -26,31 +25,28 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
 client = bigquery.Client()
 
 # GET DATA ----- this will query our data from the database once only when the app is loaded.
-movie_dicts, movie_dict = query_data.get_movie(client) 
-# movie_dicts is an array of dictionaries for a JSON table (next level filtering of movies). movie_dict is just a dictionary of movie_ids as keys and movie_titles as corresponding values.
-# SOURCE for Dropdown Creation:
-# https://stackoverflow.com/questions/45877080/how-to-create-dropdown-menu-from-python-list-using-flask-and-html
-# NEXT LEVEL:
-# https://stackoverflow.com/questions/44646925/flask-dynamic-dependent-dropdown-list
-# ACCESSING DICTIONARY IN JINJA:
-# https://stackoverflow.com/questions/24727977/get-nested-dict-items-using-jinja2-in-flask
-
-# getting dataframe of transaction data for our recommendation systems
-data = query_data.get_data(client) 
+movie_dicts = query_data.get_movie(client) # getting movie data in form of decades:{movie_id, movie_title, movie_year} 
+data = query_data.get_data(client) # getting dataframe of transaction data for our recommendation systems
 
 
 @app.route('/index')
 @app.route('/')
 def index():
-    global movie_dict
-    return render_template("index.html", movie_dict = movie_dict)
+    return render_template("index.html", decades = list(movie_dicts.keys())) # passing the keys (decades) as a list to JS front end
+
+
+# this is an API call for AJAX to update our movie dropdowns based on the choice of decade. It sends the decade, and then uses the data in our server that was queried from database to send AJAX asynchronous update of dropdown.
+@app.route('/get_movies/<decade>')
+def get_movies(decade):
+    if decade not in movie_dicts:
+        return jsonify([])
+    else:
+        return jsonify(movie_dicts[decade])
 
 
 # when the form press submit, it links it to the redirect which will be sent here and then passes the prediction variable to the results page after back-end recommendation logic completed:
 @app.route('/myredirect', methods = ['POST'])
 def my_redirect():
-    global data
-    global movie_dict
     if request.method == 'POST':
         # from the request form, convert it to a dictionary saved as this variable
         _features = request.form.to_dict()
@@ -68,7 +64,7 @@ def my_redirect():
         movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
 
         # convert them to movie titles:
-        predictions = [movie_dict[id] for id in movie_ids]
+        # predictions = [simple_dict[id] for id in movie_ids]
 
         # send it as a proper JSON dumps string for the redirect routing so that it can be unpacked using a JSON loads:
         predictions = json.dumps(predictions)

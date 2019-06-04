@@ -24,6 +24,46 @@
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/agency.css') }}" rel="stylesheet">
 
+  <!-- Loading the JQUERY library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+  <!-- Loading JQUERY Custom Dynamic Dropdown Functions -->
+  <script>
+    // When document (HTML) is ready and is loaded - the function is called, but it just sits there. It's READY
+    // This is to prevent any jQuery code from running before the document is finished loading (is ready).
+    // It is good practice to wait for the document to be fully loaded and ready before working with it. This also allows you to have your JavaScript code before the body of your document, in the head section.
+
+    $(document).ready(function() {
+
+      // fill decades dropdown initially with decades data from Flask server
+      $(function() {
+        var data = {{ decades|safe }};
+        $.each(data, function(i, option) {
+            $('#decade1').append($('<option/>').attr("value", option).text(option));
+        });
+      })
+
+      // # WHEN the value of the ID changes, then call this function. Further function is called when category is changed.
+      $('#decade1').change(function() {
+          // gets the value selected in the dropdown
+          var decade = $('#decade1').val();
+          // Make Ajax Request and expect JSON-encoded data --- make JSON request to backend. Send it the URL / ROUTE of the backend. In the route, you are adding the decade that was selected / retrieved through the hashtag variable. So you will know what category was selected, and then append it to the URL.
+          // Whatever comes BACK is in the "data" - this will be our JSON dump of movies that correspond with the decade
+          $.getJSON(
+            '/get_movies' + '/' + decade,
+            function(data) {
+                // Remove old options
+                $('#movie1').find('option').remove();
+                // Add new items to that dropdown
+                $.each(data, function(i, option) {
+                  $('#movie1').append($('<option/>').attr("value", option.movie_id).text(option.movie_title));
+                });
+            }
+          );
+      });
+    });
+  </script>
+
 </head>
 
 <body id="page-top">
@@ -91,65 +131,15 @@
           </span>
           <br><br>
           <h4 class="service-heading">Choose Your 1st Movie:</h4>
-              
-                  <!-- DropDown -->
-                  <select name="movie_1" method='GET' action='/'>
-                      {% for movie in movie_dict %}
-                      <option value="{{movie}}"> {{movie_dict[movie]}} </option>
-                      {% endfor %}
-                  </select> 
-              
-        </div>
-      </div>
 
-      <br><br>
+          <select id="decade1">
+              <option SELECTED value='0'>Choose a decade.</option>
+          </select>
 
-      <div class="row text-center">
-        <div class="col-md">
-            <h4 class="service-heading">Choose Your 2nd Movie:</h4>
-                
-                    <!-- DropDown -->
-                  <select name="movie_2" method='GET' action='/'>
-                    {% for movie in movie_dict %}
-                    <option value="{{movie}}"> {{movie_dict[movie]}} </option>
-                    {% endfor %}
-                </select> 
+          <br><br>
 
-        </div>
-      </div>
-      
-      <br><br>
-
-
-      <div class="row text-center">
-        <div class="col-md">
-          <h4 class="service-heading">Choose Your 3rd Movie:</h4>
-              
-                  <!-- DropDown -->
-                  <select name="movie_3" method='GET' action='/'>
-                    {% for movie in movie_dict %}
-                    <option value="{{movie}}"> {{movie_dict[movie]}} </option>
-                    {% endfor %}
-                </select> 
-
-              
-        </div>
-      </div>
-
-      <br><br>
-
-
-      <div class="row text-center">
-        <div class="col-md">
-          <h4 class="service-heading">Choose Your 4th Movie:</h4>
-              
-                  <!-- DropDown -->
-                  <select name="movie_4" method='GET' action='/'>
-                    {% for movie in movie_dict %}
-                    <option value="{{movie}}"> {{movie_dict[movie]}} </option>
-                    {% endfor %}
-                </select> 
-
+          <select id="movie1">
+          </select>
               
         </div>
       </div>
@@ -160,7 +150,7 @@
             <div class="col-md">
               <br>
             <input class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" type="submit" value="Submit">
-            </form>
+        </form>
           </div>
       </div>
       
@@ -709,7 +699,7 @@
 
   <!-- Custom scripts for this template -->
   <script src="{{ url_for('static', filename='js/agency.min.js') }}"></script>
-
+  
 </body>
 
 </html>
