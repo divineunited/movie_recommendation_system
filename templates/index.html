@@ -40,6 +40,9 @@
         var data = {{ decades|safe }};
         $.each(data, function(i, option) {
             $('#decade1').append($('<option/>').attr("value", option).text(option));
+            $('#decade2').append($('<option/>').attr("value", option).text(option));
+            $('#decade3').append($('<option/>').attr("value", option).text(option));
+            $('#decade4').append($('<option/>').attr("value", option).text(option));
         });
       })
 
@@ -61,6 +64,46 @@
             }
           );
       });
+
+      $('#decade2').change(function() {
+          var decade = $('#decade2').val();
+          $.getJSON(
+            '/get_movies' + '/' + decade,
+            function(data) {
+                $('#movie2').find('option').remove();
+                $.each(data, function(i, option) {
+                  $('#movie2').append($('<option/>').attr("value", option.movie_id).text(option.movie_title));
+                });
+            }
+          );
+      });
+
+      $('#decade3').change(function() {
+          var decade = $('#decade3').val();
+          $.getJSON(
+            '/get_movies' + '/' + decade,
+            function(data) {
+                $('#movie3').find('option').remove();
+                $.each(data, function(i, option) {
+                  $('#movie3').append($('<option/>').attr("value", option.movie_id).text(option.movie_title));
+                });
+            }
+          );
+      });
+
+      $('#decade4').change(function() {
+          var decade = $('#decade4').val();
+          $.getJSON(
+            '/get_movies' + '/' + decade,
+            function(data) {
+                $('#movie4').find('option').remove();
+                $.each(data, function(i, option) {
+                  $('#movie4').append($('<option/>').attr("value", option.movie_id).text(option.movie_title));
+                });
+            }
+          );
+      });
+
     });
   </script>
 
@@ -109,11 +152,8 @@
     </div>
   </header>
 
-  <!-- Services -->
+  <!-- Services - this is where our dropdowns are -->
   <section id="services">
-
-  <!-- Post Request! -->
-  <form action="/myredirect" method="POST">
 
     <div class="container">
       <div class="row">
@@ -122,6 +162,10 @@
           <h3 class="section-subheading text-muted">Then, we will recommend to you 10 classic movies you should see!</h3>
         </div>
       </div>
+
+
+  <!-- Post Request! -->
+  <form action="/myredirect" method="POST">
       
       <div class="row text-center">
         <div class="col-md">
@@ -129,18 +173,46 @@
             <i class="fas fa-circle fa-stack-2x text-primary"></i>
             <i class="fas fa-film fa-stack-1x fa-inverse"></i>
           </span>
+
           <br><br>
           <h4 class="service-heading">Choose Your 1st Movie:</h4>
-
           <select id="decade1">
               <option SELECTED value='0'>Choose a decade.</option>
           </select>
-
           <br><br>
-
           <select id="movie1">
           </select>
-              
+          
+          <br><br>
+          <h4 class="service-heading">Choose Your 2nd Movie:</h4>
+          <select id="decade2">
+              <option SELECTED value='0'>Choose a decade.</option>
+          </select>
+          <br><br>
+          <select id="movie2">
+          </select>   
+
+
+          <br><br>
+          <h4 class="service-heading">Choose Your 3rd Movie:</h4>
+          <select id="decade3">
+              <option SELECTED value='0'>Choose a decade.</option>
+          </select>
+          <br><br>
+          <select id="movie3">
+          </select>   
+
+
+          <br><br>
+          <h4 class="service-heading">Choose Your 4th Movie:</h4>
+          <select id="decade4">
+              <option SELECTED value='0'>Choose a decade.</option>
+          </select>
+          <br><br>
+          <select id="movie4">
+          </select>
+
+
         </div>
       </div>
 
