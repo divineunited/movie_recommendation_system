@@ -35,7 +35,7 @@ def index():
     return render_template("index.html", decades = list(movie_dicts.keys())) # passing the keys (decades) as a list to JS front end
 
 
-# this is an API call for AJAX to update our movie dropdowns based on the choice of decade. It sends the decade, and then uses the data in our server that was queried from database to send AJAX asynchronous update of dropdown.
+# this is an API endpoint for AJAX to update our movie dropdowns based on the choice of decade. It sends the decade, and then uses the data in our server that was queried from database to send AJAX asynchronous update for dropdown.
 @app.route('/get_movies/<decade>')
 def get_movies(decade):
     if decade not in movie_dicts:
@@ -52,25 +52,27 @@ def my_redirect():
         _features = request.form.to_dict()
 
         ### converting inputs to their correct value types:
-        _features['movie_1'] = int(_features['movie_1'])
-        _features['movie_2'] = int(_features['movie_2'])
-        _features['movie_3'] = int(_features['movie_3'])
-        _features['movie_4'] = int(_features['movie_4'])
+        _features['movie1'] = int(_features['movie1'])
+        _features['movie2'] = int(_features['movie2'])
+        _features['movie3'] = int(_features['movie3'])
+        _features['movie4'] = int(_features['movie4'])
 
         # get the values and turn it into a list
         _features=list(_features.values())
+        print(_features)
 
         # get our recommendation movie_ids:
-        movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
+        # movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
 
         # convert them to movie titles:
         # predictions = [simple_dict[id] for id in movie_ids]
 
         # send it as a proper JSON dumps string for the redirect routing so that it can be unpacked using a JSON loads:
-        predictions = json.dumps(predictions)
+        # predictions = json.dumps(predictions)
 
         # passing our predictions JSON dump and an achor to the result url.
-        return redirect(url_for('result', predictions = predictions, _anchor='services'))
+        # return redirect(url_for('result', predictions = predictions, _anchor='services'))
+        return str(_features)
 
 
 

@@ -46,10 +46,18 @@
         });
       })
 
+      // hides the movie dropdown
+      $("#movie1").hide();
+      $("#movie2").hide();
+      $("#movie3").hide();
+      $("#movie4").hide();
+
       // # WHEN the value of the ID changes, then call this function. Further function is called when category is changed.
       $('#decade1').change(function() {
           // gets the value selected in the dropdown
           var decade = $('#decade1').val();
+          // displays the movie dropdown
+          $("#movie1").show();
           // Make Ajax Request and expect JSON-encoded data --- make JSON request to backend. Send it the URL / ROUTE of the backend. In the route, you are adding the decade that was selected / retrieved through the hashtag variable. So you will know what category was selected, and then append it to the URL.
           // Whatever comes BACK is in the "data" - this will be our JSON dump of movies that correspond with the decade
           $.getJSON(
@@ -67,6 +75,7 @@
 
       $('#decade2').change(function() {
           var decade = $('#decade2').val();
+          $("#movie2").show();
           $.getJSON(
             '/get_movies' + '/' + decade,
             function(data) {
@@ -80,6 +89,7 @@
 
       $('#decade3').change(function() {
           var decade = $('#decade3').val();
+          $("#movie3").show();
           $.getJSON(
             '/get_movies' + '/' + decade,
             function(data) {
@@ -93,6 +103,7 @@
 
       $('#decade4').change(function() {
           var decade = $('#decade4').val();
+          $("#movie4").show();
           $.getJSON(
             '/get_movies' + '/' + decade,
             function(data) {
@@ -176,40 +187,40 @@
 
           <br><br>
           <h4 class="service-heading">Choose Your 1st Movie:</h4>
-          <select id="decade1">
+          <select id="decade1" required>
               <option SELECTED value='0'>Choose a decade.</option>
           </select>
           <br><br>
-          <select id="movie1">
+          <select id="movie1" required>
           </select>
           
           <br><br>
           <h4 class="service-heading">Choose Your 2nd Movie:</h4>
-          <select id="decade2">
+          <select id="decade2" required>
               <option SELECTED value='0'>Choose a decade.</option>
           </select>
           <br><br>
-          <select id="movie2">
+          <select id="movie2" required>
           </select>   
 
 
           <br><br>
           <h4 class="service-heading">Choose Your 3rd Movie:</h4>
-          <select id="decade3">
+          <select id="decade3" required>
               <option SELECTED value='0'>Choose a decade.</option>
           </select>
           <br><br>
-          <select id="movie3">
+          <select id="movie3" required>
           </select>   
 
 
           <br><br>
           <h4 class="service-heading">Choose Your 4th Movie:</h4>
-          <select id="decade4">
+          <select id="decade4" required>
               <option SELECTED value='0'>Choose a decade.</option>
           </select>
           <br><br>
-          <select id="movie4">
+          <select id="movie4" required>
           </select>
 
 
