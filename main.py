@@ -25,7 +25,7 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
 client = bigquery.Client()
 
 # GET DATA ----- this will query our data from the database once only when the app is loaded.
-movie_dicts = query_data.get_movie(client) # getting movie data in form of decades:{movie_id, movie_title, movie_year} 
+movie_dicts, id_movie = query_data.get_movie(client) # getting movie data in form of decades:{movie_id, movie_title, movie_year} as well as id_movie simple dictionary 
 data = query_data.get_data(client) # getting dataframe of transaction data for our recommendation systems
 
 
@@ -52,27 +52,25 @@ def my_redirect():
         _features = request.form.to_dict()
 
         ### converting inputs to their correct value types:
-        _features['movie1'] = int(_features['movie1'])
-        _features['movie2'] = int(_features['movie2'])
-        _features['movie3'] = int(_features['movie3'])
-        _features['movie4'] = int(_features['movie4'])
+        _features['movie_1'] = int(_features['movie_1'])
+        _features['movie_2'] = int(_features['movie_2'])
+        _features['movie_3'] = int(_features['movie_3'])
+        _features['movie_4'] = int(_features['movie_4'])
 
         # get the values and turn it into a list
         _features=list(_features.values())
-        print(_features)
 
-        # get our recommendation movie_ids:
-        # movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
+        # get our recommended movie_ids:
+        movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
 
         # convert them to movie titles:
-        # predictions = [simple_dict[id] for id in movie_ids]
+        predictions = [id_movie[id] for id in movie_ids]
 
         # send it as a proper JSON dumps string for the redirect routing so that it can be unpacked using a JSON loads:
-        # predictions = json.dumps(predictions)
+        predictions = json.dumps(predictions)
 
         # passing our predictions JSON dump and an achor to the result url.
-        # return redirect(url_for('result', predictions = predictions, _anchor='services'))
-        return str(_features)
+        return redirect(url_for('result', predictions = predictions, _anchor='services'))
 
 
 

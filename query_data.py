@@ -2,7 +2,7 @@ from google.cloud import bigquery
 
 
 def get_movie(client):
-    '''USED TO GET MOVIE DATA FOR DROPDOWN SELECTIONS. This function requires an authenticated google bigquery client and returns an array of hashtables with year, (genre), movie_ids, and movie_titles as keys and their corresponding values from Google Big Query. It also returns a dictionary of movie_ids as keys and movie_titles as values'''
+    '''USED TO GET MOVIE DATA FOR DROPDOWN SELECTIONS. This function requires an authenticated google bigquery client and returns an array of hashtables with year, (genre), movie_ids, and movie_titles as keys and their corresponding values from Google Big Query. It also returns a simple dictionary of movie_ids as keys and movie_titles as values'''
 
     # can get the GENRE later - need to unpivot first
     # source: unpivot of genre columns: https://stackoverflow.com/questions/16784999/sql-get-column-names-when-value-is-1
@@ -13,6 +13,7 @@ def get_movie(client):
 
     # creating a Dictionary of Decades that we will populate accordingly below
     movie_dicts = {'20s':[], '30s':[], '40s':[], '50s':[], '60s':[], '70s':[], '80s':[], '90s':[]}
+    id_movie = {}
 
     for row in rows:
         movie_dict = {}
@@ -37,7 +38,9 @@ def get_movie(client):
         else:
             movie_dicts['90s'].append(movie_dict)
 
-    return movie_dicts
+        id_movie[row.movie_id] = row.movie_title
+
+    return movie_dicts, id_movie
 
 
 
