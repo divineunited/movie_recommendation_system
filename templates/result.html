@@ -27,13 +27,12 @@
   <!-- Loading the JQUERY library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
-  <!-- Loading JQUERY Custom Dynamic Dropdown Functions -->
   <script>
     $(document).ready(function() {
       $(function() {
         var data = {{ predictions|safe }};
         $.each(data, function(i, option) {
-            $('#predictionhref').append($('<a></a>').attr("href", "https://www.imdb.com/find?" + option).text(option));
+            $('#predictionhref').append($('<a></a>').addClass("list-group-item list-group-item-action").attr("href", "https://www.imdb.com/find?ref_=nv_sr_fn&q=" + option + "&s=all").text(option));
         });
       })
     });
@@ -100,7 +99,7 @@
 
           <div class="list-group">
 
-              <a id='predictionhref' class="list-group-item list-group-item-action"></a>
+              <a id='predictionhref'></a>
 
           </div>
 
