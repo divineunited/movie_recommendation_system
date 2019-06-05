@@ -24,6 +24,21 @@
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/agency.css') }}" rel="stylesheet">
 
+  <!-- Loading the JQUERY library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+  <!-- Loading JQUERY Custom Dynamic Dropdown Functions -->
+  <script>
+    $(document).ready(function() {
+      $(function() {
+        var data = {{ predictions|safe }};
+        $.each(data, function(i, option) {
+            $('#predictionhref').append($('<a></a>').attr("href", "https://www.imdb.com/find?" + option).text(option));
+        });
+      })
+    });
+  </script>
+
 </head>
 
 <body id="page-top">
@@ -84,11 +99,9 @@
           <h4 class="service-heading">Our Recommendations for You:</h4>
 
           <div class="list-group">
-              {% for prediction in predictions %}
 
-              <a id='predictionhref' href="https://www.imdb.com/find?{{prediction}}" class="list-group-item list-group-item-action">{{prediction}}</a>
+              <a id='predictionhref' class="list-group-item list-group-item-action"></a>
 
-              {% endfor %}
           </div>
 
           <br><br>
