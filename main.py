@@ -27,6 +27,9 @@ client = bigquery.Client()
 # GET DATA ----- this will query our data from the database once only when the app is loaded.
 movie_dicts, id_movie = query_data.get_movie(client) # getting movie data in form of decades:{movie_id, movie_title, movie_year} as well as id_movie simple dictionary 
 data = query_data.get_data(client) # getting dataframe of transaction data for our recommendation systems
+# creating our useritemrating matrix for the recommendation engine using this data
+userItemRatingMatrix=pd.pivot_table(data, values='rating',
+                                index=['user_id'], columns=['movie_id'])
 
 
 @app.route('/index')
@@ -48,7 +51,7 @@ def get_movies(decade):
 @app.route('/myredirect', methods = ['POST'])
 def my_redirect():
     if request.method == 'POST':
-        # from the request form, convert it to a dictionary saved as this variable
+        # from the request form, convert the values chosen into a dictionary (key:movie_id eg: 'movie_1':'532')
         _features = request.form.to_dict()
 
         ### converting inputs to their correct value types:
@@ -57,16 +60,16 @@ def my_redirect():
         _features['movie_3'] = int(_features['movie_3'])
         _features['movie_4'] = int(_features['movie_4'])
 
-        # get the values and turn it into a list
+        # get the values and turn it into a list - this is our final list of movie_ids chosen
         _features=list(_features.values())
 
-        # get our recommended movie_ids:
-        movie_ids = recommend_engine.your_item_to_item_recommendations(_features, data)
+        # run our recommendation engine and get the top 10 recommendation movie ids - this function weights both user to user and item to item recommendation engines
+        movie_ids = recommend_engine.main_recommend(_features, userItemRatingMatrix)
 
-        # convert them to movie titles:
+        # convert them to movie title strings using simple dictionary queried from database:
         predictions = [id_movie[id] for id in movie_ids]
 
-        # send it as a proper JSON dumps string for the redirect routing so that it can be unpacked using a JSON loads:
+        # send it as a proper JSON dump string for the redirect routing so that it can be unpacked using a JSON loads:
         predictions = json.dumps(predictions)
 
         # passing our predictions JSON dump and an achor to the result url.
