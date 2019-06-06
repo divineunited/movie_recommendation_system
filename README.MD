@@ -8,9 +8,9 @@ The data is stored on Google Big Query and is queried appropriately when the app
 # https://classicmovies.appspot.com/
 
 
-
-***NOTE: Since recommendations are based on the ratings of other users in 1997, some recommendations might not be age-appropriate (e.g. many users might have highly R-rated movies like Silence of the Lambs as well as PG-rated movies like Aladdin).***
-
+<br><br>
+*NOTE: Since recommendations are based on the ratings of other users in 1997, some recommendations might not be age-appropriate (e.g. many users might have highly R-rated movies like Silence of the Lambs as well as PG-rated movies like Aladdin).*
+<br><br>
 
 **About The Data Set:**
  
