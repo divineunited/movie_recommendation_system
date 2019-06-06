@@ -19,9 +19,11 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 #### QUERY OUR TRANSACTION AND MOVIE DATA FROM GOOGLE BIG QUERY:
 # AUTHENTIFICATION:
-path = os.getcwd()
-path += '\classicmovies-5e206ef6ea35.json'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
+# path = os.getcwd()
+# path += '\classicmovies-5e206ef6ea35.json'
+from pathlib import Path
+p = Path("auth") / 'classicmovies-5e206ef6ea35.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.abspath(str(p)) # p.resolve()
 client = bigquery.Client()
 
 # GET DATA ----- this will query our data from the database once only when the app is loaded.
