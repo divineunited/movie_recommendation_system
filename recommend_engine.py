@@ -106,7 +106,8 @@ def item_to_item_recommendations(movie_ids, userItemRatingMatrix):
     # removing duplicates while preserving order:
     combined_sorted = f7(combined_sorted)
 
-    return combined_sorted
+    # return and drop the movies already seen by active user
+    return [movie for movie in combined_sorted if movie not in movie_ids]
 
 
 
@@ -129,14 +130,14 @@ def main_recommend(user_choices, userItemRatingMatrix):
     # looping through item to item and keeping the ones that are in both lists
     for movie in itoi_movies:
         if movie in utou_movies:
-            final += movie
+            final += [movie]
 
     # we want to make sure the final list is at least 10
     for movie in itoi_movies:
         if len(final) >= 10:
                 break
         elif movie not in final:
-            final += movie
+            final += [movie]
     
     # return no more than 10
     return final[:10]
