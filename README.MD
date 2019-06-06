@@ -1,6 +1,14 @@
 # Movie Recommendation System
 
-In this project, we will build a full stack movie recommendation web application system based on a MovieLens archival dataset.
+This full stack movie recommendation web application system is based on a MovieLens archival dataset that can be used to recommend classic movies. It utilizes both item to item recommendation and collaborative user to user recommendation algorithms based on transaction data captured in a seven month period in 1997. When the user chooses 4 movies, it registers the user as a new user utilizing those 4 choices to do both item-item recommendation + user-user recommendation. The program then weights the results and returns the top 10 recommendations. 
+
+The data is stored on Google Big Query and is queried appropriately when the app is called. The data is serviced by a FLASK / PYTHON service layer and a BOOTSTRAP / JQUERY front-end. It is hosted using Google App Engine.
+
+## TRY IT OUT HERE: ##
+
+
+
+***NOTE: Since recommendations are based on the ratings of other users in 1997, some recommendations might not be age-appropriate (e.g. many users might have highly R-rated movies like Silence of the Lambs as well as PG-rated movies like Aladdin).***
 
 
 **About The Data Set:**

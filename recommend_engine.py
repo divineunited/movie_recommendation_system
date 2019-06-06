@@ -73,6 +73,14 @@ def inearestneighbours(movie_id, k, userItemRatingMatrix, distance_measure = ham
     return list(sortedMovies)
 
 
+## -- HELPER FUNCTION TO REMOVE DUPLICATES WHILE PRESERVING ORDER:
+# Source: https://stackoverflow.com/questions/480214/how-do-you-remove-duplicates-from-a-list-whilst-preserving-order
+def f7(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]
+
+
 ##------ MAIN FUNCTION TO GET ITEM TO ITEM RECOMMENDATIONS
 def item_to_item_recommendations(movie_ids, userItemRatingMatrix):
     '''This function requires a list of 4 favourite movie ids as well as the userItemRatingMatrix. It makes use of the helper function nearestneighbours that finds the K nearest neighbor items of each movie. These items are added to a recommendation list and a ranked recommendation list is returned''' 
@@ -84,19 +92,21 @@ def item_to_item_recommendations(movie_ids, userItemRatingMatrix):
     # Create empty list of recommendation
     # Append the function's output (sortedMovies) to the recommendations list
 
-    recommendations= []
+    recommendations = []
     for movie_id in movie_ids:
-        # getting 10 nearest neighbors of each movie
-        sortedMovies = inearestneighbours(movie_id, 10, userItemRatingMatrix, distance_measure = hamming) 
-        recommendations += sortedMovies
+        # getting 25 nearest neighbors of each movie
+        sortedMovies = inearestneighbours(movie_id, 25, userItemRatingMatrix, distance_measure = hamming) 
+        recommendations.append(sortedMovies)
     
-    # we want to sort according to the movies that appeared in all 4 recommendation list
-    recommendations=sorted(recommendations, key=recommendations.count, reverse=True)
+    # combine 4 lists together whilst keeping order:
+    combined_sorted = []
+    for a, b, c, d in zip(recommendations[0], recommendations[1], recommendations[2], recommendations[3]):
+        combined_sorted += [a, b, c, d]
 
-    # removing duplicates:
-    recommendations = list(dict.fromkeys(recommendations))
+    # removing duplicates while preserving order:
+    combined_sorted = f7(combined_sorted)
 
-    return recommendations
+    return combined_sorted
 
 
 
@@ -112,22 +122,21 @@ def main_recommend(user_choices, userItemRatingMatrix):
     userItemRatingMatrix = userItemRatingMatrix.sort_index() # sorting by index to put user 0 at top
 
     utou_movies = user_to_user_recommendations(0, userItemRatingMatrix) # this will return top 100 movie recommendations
-    itoi_movies = item_to_item_recommendations(user_choices, userItemRatingMatrix) # this will return ~40 movie recommendations based on 10 closest to each movie - inherently not sorted in any order.
+    itoi_movies = item_to_item_recommendations(user_choices, userItemRatingMatrix) # this will return ~100 movie recommendations based on 33 closest to each movie
 
     final = []
 
     # looping through item to item and keeping the ones that are in both lists
     for movie in itoi_movies:
         if movie in utou_movies:
-            final.append(movie)
-    
-    # we want to make sure that the top 3 in utou movies are in our final list at least
-    for movie in utou_movies[0:3]:
-        if movie not in final: # if it doesn't have it already
-            final.append(movie) # then append
+            final += movie
 
     # we want to make sure the final list is at least 10
-    if len(final) < 10:
-        final.extend(utou_movies[3:13])
+    for movie in itoi_movies:
+        if len(final) >= 10:
+                break
+        elif movie not in final:
+            final += movie
     
+    # return no more than 10
     return final[:10]
